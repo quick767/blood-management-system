@@ -77,7 +77,12 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     try {
       setLoading(true);
+      console.log('🚀 Starting registration with data:', userData);
+      console.log('🌐 API URL:', import.meta.env.VITE_API_URL);
+      
       const response = await authAPI.register(userData);
+      console.log('✅ Registration response:', response.data);
+      
       const { token, user: newUser } = response.data;
 
       // Store in cookies
@@ -90,8 +95,13 @@ export const AuthProvider = ({ children }) => {
       toast.success('Registration successful!');
       return { success: true, user: newUser };
     } catch (error) {
-      const message = error.response?.data?.message || 'Registration failed';
-      toast.error(message);
+      console.error('❌ Registration error:', error);
+      console.error('❌ Error response:', error.response?.data);
+      console.error('❌ Error status:', error.response?.status);
+      console.error('❌ Error code:', error.code);
+      
+      const message = error.response?.data?.message || error.message || 'Registration failed';
+      toast.error(`Registration failed: ${message}`);
       return { success: false, error: message };
     } finally {
       setLoading(false);

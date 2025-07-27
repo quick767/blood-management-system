@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: blood-management-api
+    env: node
+    plan: free
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        value: mongodb+srv://quicklink812:K1ss00IEccrxgp2L@cluster0.kxdtmkd.mongodb.net/blood-management?retryWrites=true&w=majority&appName=Cluster0
+      - key: JWT_SECRET
+        value: blood-management-super-secret-jwt-key-2024-production
+      - key: JWT_EXPIRE
+        value: 7d
+      - key: EMAIL_HOST
+        value: smtp.gmail.com
+      - key: EMAIL_PORT
+        value: 587
+      - key: EMAIL_USER
+        value: quicklink812@gmail.com
+      - key: EMAIL_PASS
+        value: swpo yavl lkbt ldir
+      - key: EMAIL_FROM
+        value: Blood Management System <quicklink812@gmail.com>
+      - key: FRONTEND_URL
+        value: https://blood-management-frontend.vercel.app

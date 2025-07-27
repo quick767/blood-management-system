@@ -139,6 +139,13 @@ function AppRoutes() {
             </AuthLayout>
           </PublicRoute>
         } />
+        <Route path="/signup" element={
+          <PublicRoute>
+            <AuthLayout>
+              <RegisterPage />
+            </AuthLayout>
+          </PublicRoute>
+        } />
 
         {/* Protected Dashboard Routes */}
         <Route path="/dashboard" element={

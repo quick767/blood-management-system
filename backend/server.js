@@ -3,7 +3,13 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
-require('dotenv').config();
+require('dotenv').config({
+  path: process.env.NODE_ENV === 'production' ? '.env.production' : '.env'
+});
+
+// Fix debug environment variables
+process.env.DEBUG = process.env.DEBUG || '';
+process.env.DEBUG_URL = process.env.DEBUG_URL || '';
 
 const app = express();
 

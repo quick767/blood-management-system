@@ -23,14 +23,8 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Database connection with compatible settings
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/blood-management', {
-  serverSelectionTimeoutMS: 30000, // 30 seconds
-  socketTimeoutMS: 45000, // 45 seconds
-  maxPoolSize: 10,
-  minPoolSize: 5,
-  maxIdleTimeMS: 30000
-})
+// Database connection - simple and reliable
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/blood-management')
 .then(() => {
   console.log('MongoDB connected successfully');
   console.log('Database URI:', process.env.MONGODB_URI ? 'Connected to Atlas' : 'Connected to local');

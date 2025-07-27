@@ -60,6 +60,55 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Database health check endpoint
+app.get('/api/health/db', async (req, res) => {
+  try {
+    const dbState = mongoose.connection.readyState;
+    const states = {
+      0: 'disconnected',
+      1: 'connected',
+      2: 'connecting',
+      3: 'disconnecting'
+    };
+    
+    if (dbState === 1) {
+      // Test actual database operation
+      const User = require('./models/User');
+      const userCount = await User.countDocuments();
+      
+      res.json({
+        status: 'OK',
+        database: {
+          state: states[dbState],
+          connected: true,
+          userCount: userCount,
+          host: mongoose.connection.host,
+          name: mongoose.connection.name
+        },
+        timestamp: new Date().toISOString()
+      });
+    } else {
+      res.status(503).json({
+        status: 'ERROR',
+        database: {
+          state: states[dbState],
+          connected: false
+        },
+        timestamp: new Date().toISOString()
+      });
+    }
+  } catch (error) {
+    res.status(503).json({
+      status: 'ERROR',
+      database: {
+        connected: false,
+        error: error.message
+      },
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);

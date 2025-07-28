@@ -1,19 +1,19 @@
 const axios = require('axios');
 
 const testData = {
-  name: "Test User",
-  email: "test@example.com",
+  name: "Test User 2",
+  email: "test2@example.com",
   password: "password123",
-  phone: "1234567890",
-  bloodGroup: "O+",
-  age: 25,
-  gender: "male",
-  role: "donor",
+  phone: "9876543210",
+  bloodGroup: "A+",
+  age: 30,
+  gender: "female",
+  role: "recipient",
   address: {
-    street: "123 Test St",
-    city: "Test City",
-    state: "Test State",
-    zipCode: "12345"
+    street: "456 Test Ave",
+    city: "Test City 2",
+    state: "Test State 2",
+    zipCode: "54321"
   }
 };
 

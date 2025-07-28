@@ -87,9 +87,15 @@ const HomePage = () => {
         </div>
         
         {/* Decorative elements */}
-        <div className="absolute top-20 left-10 w-32 h-32 bg-white bg-opacity-10 rounded-full animate-pulse" />
-        <div className="absolute bottom-20 right-10 w-24 h-24 bg-white bg-opacity-10 rounded-full animate-pulse" />
-        <div className="absolute top-1/2 right-1/4 w-16 h-16 bg-white bg-opacity-10 rounded-full animate-pulse" />
+        <div className="absolute top-20 left-10 w-32 h-32 bg-red-400 bg-opacity-20 rounded-full animate-pulse flex items-center justify-center">
+          <Droplets className="h-16 w-16 text-white opacity-30" />
+        </div>
+        <div className="absolute bottom-20 right-10 w-24 h-24 bg-red-300 bg-opacity-20 rounded-full animate-pulse flex items-center justify-center">
+          <Heart className="h-12 w-12 text-white opacity-30" />
+        </div>
+        <div className="absolute top-1/2 right-1/4 w-16 h-16 bg-red-500 bg-opacity-20 rounded-full animate-pulse flex items-center justify-center">
+          <Users className="h-8 w-8 text-white opacity-30" />
+        </div>
       </section>
 
       {/* Stats Section */}

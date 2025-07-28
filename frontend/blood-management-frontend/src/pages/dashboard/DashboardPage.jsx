@@ -296,16 +296,29 @@ const DashboardPage = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Welcome Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground">
-          {getGreeting()}, {user?.name}!
-        </h1>
-        <p className="text-muted-foreground mt-2">
-          Welcome to your {user?.role} dashboard. Here's what's happening with your account.
-        </p>
+    <div className="min-h-screen bg-gradient-to-br from-red-50 to-white dark:from-gray-900 dark:to-gray-800">
+      {/* Hero Banner */}
+      <div className="bg-gradient-to-r from-red-600 to-red-700 text-white">
+        <div className="container mx-auto px-4 py-12">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-bold mb-2">
+                {getGreeting()}, {user?.name}! 👋
+              </h1>
+              <p className="text-red-100 text-lg">
+                Welcome to your {user?.role} dashboard. Ready to make a difference today?
+              </p>
+            </div>
+            <div className="hidden md:flex items-center space-x-4">
+              <div className="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                <Heart className="h-10 w-10 text-white" />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+
+      <div className="container mx-auto px-4 py-8">
 
       {/* User Info Card */}
       <Card className="mb-8">
@@ -367,6 +380,7 @@ const DashboardPage = () => {
           </CardContent>
         </Card>
       )}
+      </div>
     </div>
   );
 };

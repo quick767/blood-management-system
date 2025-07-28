@@ -19,6 +19,7 @@ app.use(morgan('combined'));
 app.use(cors({
   origin: [
     process.env.FRONTEND_URL,
+    'https://bloodbank-system-dgydo1r2d-quick767s-projects.vercel.app',
     'https://bloodbank-system-8b582ufm8-quick767s-projects.vercel.app',
     'https://bloodbank-system-by2gz01bl-quick767s-projects.vercel.app',
     'https://bloodbank-system-653c00948-quick767s-projects.vercel.app',

@@ -74,9 +74,11 @@ export const usersAPI = {
 
 // Donations API
 export const donationsAPI = {
+  create: (donationData) => api.post('/donations', donationData),
   createDonation: (donationData) => api.post('/donations', donationData),
   getDonations: (params) => api.get('/donations', { params }),
   getDonation: (id) => api.get(`/donations/${id}`),
+  getByDonor: (donorId, params) => api.get(`/donations/donor/${donorId}?${params}`),
   updateDonation: (id, donationData) => api.put(`/donations/${id}`, donationData),
   deleteDonation: (id) => api.delete(`/donations/${id}`),
   approveDonation: (id) => api.post(`/donations/${id}/approve`),
@@ -86,9 +88,11 @@ export const donationsAPI = {
 
 // Blood Requests API
 export const requestsAPI = {
+  create: (requestData) => api.post('/requests', requestData),
   createRequest: (requestData) => api.post('/requests', requestData),
   getRequests: (params) => api.get('/requests', { params }),
   getRequest: (id) => api.get(`/requests/${id}`),
+  getByRequester: (requesterId, params) => api.get(`/requests/requester/${requesterId}?${params}`),
   updateRequest: (id, requestData) => api.put(`/requests/${id}`, requestData),
   deleteRequest: (id) => api.delete(`/requests/${id}`),
   fulfillRequest: (id, fulfillmentData) => api.post(`/requests/${id}/fulfill`, fulfillmentData),

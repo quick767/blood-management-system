@@ -150,6 +150,58 @@ router.get('/', [
   }
 });
 
+// @route   GET /api/donations/donor/:donorId
+// @desc    Get donations by donor ID
+// @access  Private
+router.get('/donor/:donorId', [auth, resourceAuth], async (req, res) => {
+  try {
+    const donorId = req.params.donorId;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    // Build filter object
+    const filter = { donor: donorId };
+    
+    if (req.query.status) filter.status = req.query.status;
+    if (req.query.dateFrom) filter.donationDate = { $gte: new Date(req.query.dateFrom) };
+    if (req.query.dateTo) {
+      filter.donationDate = filter.donationDate || {};
+      filter.donationDate.$lte = new Date(req.query.dateTo);
+    }
+    if (req.query.search) {
+      filter['location.center'] = { $regex: req.query.search, $options: 'i' };
+    }
+
+    // Get donations with pagination
+    const donations = await Donation.find(filter)
+      .populate('donor', 'name email phone bloodGroup')
+      .populate('approvedBy', 'name')
+      .sort({ donationDate: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const total = await Donation.countDocuments(filter);
+
+    res.json({
+      donations,
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+        totalDonations: total,
+        hasNext: page < Math.ceil(total / limit),
+        hasPrev: page > 1
+      }
+    });
+
+  } catch (error) {
+    console.error('Get donor donations error:', error);
+    res.status(500).json({
+      message: 'Server error while fetching donor donations'
+    });
+  }
+});
+
 // @route   GET /api/donations/:id
 // @desc    Get donation by ID
 // @access  Private

@@ -32,7 +32,7 @@ const bloodRequestSchema = new mongoose.Schema({
       type: Number,
       min: [1, 'Weight must be positive']
     },
-    medicalCondition: {
+    condition: {
       type: String,
       required: [true, 'Medical condition/reason is required']
     }
@@ -58,6 +58,12 @@ const bloodRequestSchema = new mongoose.Schema({
       type: String,
       required: [true, 'Hospital contact number is required']
     },
+    contactPhone: {
+      type: String
+    },
+    contactPerson: {
+      type: String
+    },
     coordinates: {
       latitude: Number,
       longitude: Number
@@ -77,8 +83,8 @@ const bloodRequestSchema = new mongoose.Schema({
   urgency: {
     type: String,
     required: [true, 'Urgency level is required'],
-    enum: ['low', 'medium', 'high', 'critical'],
-    default: 'medium'
+    enum: ['normal', 'urgent', 'critical', 'scheduled'],
+    default: 'normal'
   },
   requiredBy: {
     type: Date,
@@ -120,7 +126,7 @@ const bloodRequestSchema = new mongoose.Schema({
   priority: {
     type: Number,
     default: function() {
-      const urgencyScores = { low: 1, medium: 2, high: 3, critical: 4 };
+      const urgencyScores = { scheduled: 1, normal: 2, urgent: 3, critical: 4 };
       const timeScore = Math.max(1, 5 - Math.floor((this.requiredBy - Date.now()) / (24 * 60 * 60 * 1000)));
       return urgencyScores[this.urgency] * timeScore;
     }
@@ -198,7 +204,7 @@ bloodRequestSchema.pre('save', function(next) {
 
 // Update priority before saving
 bloodRequestSchema.pre('save', function(next) {
-  const urgencyScores = { low: 1, medium: 2, high: 3, critical: 4 };
+  const urgencyScores = { scheduled: 1, normal: 2, urgent: 3, critical: 4 };
   const daysUntilRequired = Math.max(1, Math.ceil((this.requiredBy - Date.now()) / (24 * 60 * 60 * 1000)));
   const timeScore = Math.max(1, 6 - daysUntilRequired);
   this.priority = urgencyScores[this.urgency] * timeScore;

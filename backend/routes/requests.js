@@ -18,15 +18,14 @@ router.post('/', [
   body('patient.name').trim().isLength({ min: 2, max: 100 }).withMessage('Patient name must be between 2 and 100 characters'),
   body('patient.age').isInt({ min: 0, max: 120 }).withMessage('Patient age must be between 0 and 120'),
   body('patient.gender').isIn(['male', 'female', 'other']).withMessage('Invalid gender'),
-  body('patient.bloodGroup').isIn(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']).withMessage('Invalid blood group'),
-  body('patient.medicalCondition').trim().isLength({ min: 5 }).withMessage('Medical condition must be at least 5 characters'),
+  body('patient.condition').trim().isLength({ min: 5 }).withMessage('Medical condition must be at least 5 characters'),
   body('hospital.name').trim().isLength({ min: 2 }).withMessage('Hospital name is required'),
   body('hospital.address.city').trim().isLength({ min: 2 }).withMessage('Hospital city is required'),
   body('hospital.address.state').trim().isLength({ min: 2 }).withMessage('Hospital state is required'),
-  body('hospital.contactNumber').matches(/^\d{10}$/).withMessage('Hospital contact must be a valid 10-digit number'),
+  body('hospital.contactPhone').optional().isLength({ min: 10 }).withMessage('Hospital contact must be valid'),
   body('bloodType').isIn(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']).withMessage('Invalid blood type'),
   body('quantity').isInt({ min: 1, max: 10 }).withMessage('Quantity must be between 1 and 10 units'),
-  body('urgency').isIn(['low', 'medium', 'high', 'critical']).withMessage('Invalid urgency level'),
+  body('urgency').isIn(['normal', 'urgent', 'critical', 'scheduled']).withMessage('Invalid urgency level'),
   body('requiredBy').isISO8601().withMessage('Invalid required by date'),
   body('doctorInfo.name').trim().isLength({ min: 2 }).withMessage('Doctor name is required')
 ], async (req, res) => {
@@ -102,7 +101,7 @@ router.get('/', [
   query('limit').optional().isInt({ min: 1, max: 100 }).withMessage('Limit must be between 1 and 100'),
   query('status').optional().isIn(['pending', 'approved', 'partially_fulfilled', 'fulfilled', 'rejected', 'expired']).withMessage('Invalid status'),
   query('bloodType').optional().isIn(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']).withMessage('Invalid blood type'),
-  query('urgency').optional().isIn(['low', 'medium', 'high', 'critical']).withMessage('Invalid urgency'),
+  query('urgency').optional().isIn(['normal', 'urgent', 'critical', 'scheduled']).withMessage('Invalid urgency'),
   query('requesterId').optional().isMongoId().withMessage('Invalid requester ID')
 ], async (req, res) => {
   try {
@@ -162,6 +161,68 @@ router.get('/', [
   }
 });
 
+// @route   GET /api/requests/requester/:requesterId
+// @desc    Get requests by requester ID
+// @access  Private
+router.get('/requester/:requesterId', [auth], async (req, res) => {
+  try {
+    const requesterId = req.params.requesterId;
+    
+    // Check if user can access these requests
+    if (req.user.role !== 'admin' && req.user._id.toString() !== requesterId) {
+      return res.status(403).json({
+        message: 'Access denied. You can only view your own requests.'
+      });
+    }
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    // Build filter object
+    const filter = { requester: requesterId };
+    
+    if (req.query.status) filter.status = req.query.status;
+    if (req.query.urgency) filter.urgency = req.query.urgency;
+    if (req.query.dateFrom) filter.createdAt = { $gte: new Date(req.query.dateFrom) };
+    if (req.query.dateTo) {
+      filter.createdAt = filter.createdAt || {};
+      filter.createdAt.$lte = new Date(req.query.dateTo);
+    }
+    if (req.query.search) {
+      filter['patient.name'] = { $regex: req.query.search, $options: 'i' };
+    }
+
+    // Get requests with pagination
+    const requests = await BloodRequest.find(filter)
+      .populate('requester', 'name email phone')
+      .populate('approvedBy', 'name')
+      .populate('fulfillment.donations.donation', 'donationDate bloodGroup quantity')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const total = await BloodRequest.countDocuments(filter);
+
+    res.json({
+      requests,
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+        totalRequests: total,
+        hasNext: page < Math.ceil(total / limit),
+        hasPrev: page > 1
+      }
+    });
+
+  } catch (error) {
+    console.error('Get requester requests error:', error);
+    res.status(500).json({
+      message: 'Server error while fetching requester requests'
+    });
+  }
+});
+
 // @route   GET /api/requests/:id
 // @desc    Get blood request by ID
 // @access  Private
@@ -201,7 +262,7 @@ router.get('/:id', auth, async (req, res) => {
 // @access  Private
 router.put('/:id', [
   auth,
-  body('urgency').optional().isIn(['low', 'medium', 'high', 'critical']).withMessage('Invalid urgency level'),
+  body('urgency').optional().isIn(['normal', 'urgent', 'critical', 'scheduled']).withMessage('Invalid urgency level'),
   body('requiredBy').optional().isISO8601().withMessage('Invalid required by date'),
   body('status').optional().isIn(['pending', 'approved', 'partially_fulfilled', 'fulfilled', 'rejected', 'expired']).withMessage('Invalid status')
 ], async (req, res) => {

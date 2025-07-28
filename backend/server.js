@@ -19,6 +19,7 @@ app.use(morgan('combined'));
 app.use(cors({
   origin: [
     process.env.FRONTEND_URL,
+    'https://bloodbank-system-8b582ufm8-quick767s-projects.vercel.app',
     'https://bloodbank-system-by2gz01bl-quick767s-projects.vercel.app',
     'https://bloodbank-system-653c00948-quick767s-projects.vercel.app',
     'https://bloodbank-system-i3hjp2dkm-quick767s-projects.vercel.app',
@@ -31,6 +32,9 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
+
+// Suppress mongoose warnings
+mongoose.set('strictQuery', false);
 
 // Database connection - simple and reliable
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/blood-management')

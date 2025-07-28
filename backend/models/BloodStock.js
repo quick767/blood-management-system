@@ -105,8 +105,7 @@ const bloodStockSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Indexes for efficient queries
-bloodStockSchema.index({ bloodGroup: 1 });
+// Indexes for efficient queries (bloodGroup already has unique index)
 bloodStockSchema.index({ availableUnits: 1 });
 bloodStockSchema.index({ lastUpdated: -1 });
 

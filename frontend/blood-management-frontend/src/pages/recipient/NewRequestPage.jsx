@@ -39,6 +39,12 @@ const NewRequestPage = () => {
       contactPerson: '',
       contactPhone: ''
     },
+    doctorInfo: {
+      name: '',
+      license: '',
+      contact: '',
+      signature: ''
+    },
     medicalDetails: {
       diagnosis: '',
       bloodLoss: '',
@@ -458,6 +464,53 @@ const NewRequestPage = () => {
                   value={formData.medicalDetails.medications}
                   onChange={handleChange}
                   rows={2}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Doctor Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <User className="h-5 w-5" />
+                <span>Doctor Information</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="doctorName">Doctor Name *</Label>
+                  <Input
+                    id="doctorName"
+                    name="doctorInfo.name"
+                    placeholder="Enter doctor's full name"
+                    value={formData.doctorInfo.name}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="doctorLicense">Medical License Number</Label>
+                  <Input
+                    id="doctorLicense"
+                    name="doctorInfo.license"
+                    placeholder="Enter license number"
+                    value={formData.doctorInfo.license}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <Label htmlFor="doctorContact">Doctor Contact Number</Label>
+                <Input
+                  id="doctorContact"
+                  name="doctorInfo.contact"
+                  placeholder="Doctor's contact number"
+                  value={formData.doctorInfo.contact}
+                  onChange={handleChange}
                 />
               </div>
             </CardContent>

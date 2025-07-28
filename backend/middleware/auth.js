@@ -69,7 +69,7 @@ const donorAuth = (req, res, next) => {
 
 // Check if user can access resource (own resource or admin)
 const resourceAuth = (req, res, next) => {
-  const resourceUserId = req.params.userId || req.body.userId || req.query.userId;
+  const resourceUserId = req.params.id || req.params.userId || req.params.donorId || req.params.requesterId || req.body.userId || req.query.userId;
   
   if (req.user.role === 'admin' || req.user._id.toString() === resourceUserId) {
     return next();
